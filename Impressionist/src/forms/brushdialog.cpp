@@ -11,6 +11,11 @@
 #include "brushdialog.h"
 #include "ui_brushdialog.h"
 #include <brushes/pointbrush.h>
+#include <brushes/singlelinebrush.h>
+#include <brushes/scatteredlinebrush.h>
+#include <brushes/scatteredpointbrush.h>
+#include <brushes/circlebrush.h>
+#include <brushes/scatteredcirclebrush.h>
 
 BrushDialog::BrushDialog(QWidget *parent) :
     QDialog(parent),
@@ -24,11 +29,11 @@ BrushDialog::BrushDialog(QWidget *parent) :
     brushes_[Brushes::Point] = std::make_unique<PointBrush>("Points");
     // REQUIREMENT: Implement these five brushes. They are set to all be the same for now.
     //              You should create a new class (e.g. CircleBrush) in new files (e.g. circlebrush.h/.cpp)
-    brushes_[Brushes::Line] = std::make_unique<PointBrush>("Lines");
-    brushes_[Brushes::Circle] = std::make_unique<PointBrush>("Circles");
-    brushes_[Brushes::ScatterPoint] = std::make_unique<PointBrush>("Scattered Points");
-    brushes_[Brushes::ScatterLine] = std::make_unique<PointBrush>("Scattered Lines");
-    brushes_[Brushes::ScatterCircle] = std::make_unique<PointBrush>("Scattered Circles");
+    brushes_[Brushes::Line] = std::make_unique<SingleLineBrush>("Lines");
+    brushes_[Brushes::Circle] = std::make_unique<CircleBrush>("Circles");
+    brushes_[Brushes::ScatterPoint] = std::make_unique<ScatteredPointBrush>("Scattered Points");
+    brushes_[Brushes::ScatterLine] = std::make_unique<ScatteredLineBrush>("Scattered Lines");
+    brushes_[Brushes::ScatterCircle] = std::make_unique<ScatteredCircleBrush>("Scattered Circles");
 
     // Add the brushes to the combo box
     for (auto& kv : brushes_) {

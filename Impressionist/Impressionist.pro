@@ -22,6 +22,11 @@ CONFIG += c++14 precompile_header force_debug_info
 
 # List of filesnames of header files used when building the project
 HEADERS += \
+    src/brushes/circlebrush.h \
+    src/brushes/scatteredcirclebrush.h \
+    src/brushes/scatteredlinebrush.h \
+    src/brushes/scatteredpointbrush.h \
+    src/brushes/singlelinebrush.h \
     src/mainwindow.h \
     src/paintview.h \
     src/glinclude.h \
@@ -42,6 +47,11 @@ HEADERS += \
 
 # List of source code files to be used when building the project
 SOURCES += \
+    src/brushes/circlebrush.cpp \
+    src/brushes/scatteredcirclebrush.cpp \
+    src/brushes/scatteredlinebrush.cpp \
+    src/brushes/scatteredpointbrush.cpp \
+    src/brushes/singlelinebrush.cpp \
     src/main.cpp \
     src/mainwindow.cpp \
     src/paintview.cpp \
