@@ -5,7 +5,6 @@
 
 ScatteredLineBrush::ScatteredLineBrush(const std::string& name) :
     Brush(name),
-    angle_slider_(new QLabeledSlider),
     thiccness_slider_(new QLabeledSlider)
 {
     angle_slider_->SetRange(0, 360);
@@ -16,7 +15,7 @@ ScatteredLineBrush::ScatteredLineBrush(const std::string& name) :
 
     // Set default values
     SetSize(24);
-    angle_slider_->SetValue(0);
+    SetAngle(0);
     thiccness_slider_->SetValue(2);
 }
 
@@ -41,7 +40,7 @@ void ScatteredLineBrush::BrushMove(const glm::vec2 pos) {
         std::vector<std::vector<GLfloat>> lines;
         int size = GetSize();
         int thiccness = thiccness_slider_->GetValue();
-        int angle = angle_slider_->GetValue()*M_PI/180;
+        float angle = GetAngle()*M_PI/180;
 
         std::vector<GLfloat> triangle1 = {
             line_pos.x + cosf(angle)*(-size/2.0f) - sinf(angle)*(-thiccness/2.0f), line_pos.y + sinf(angle)*(-size/2.0f) + cosf(angle)*(-thiccness/2.0f),

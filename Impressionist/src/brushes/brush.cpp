@@ -16,13 +16,16 @@
 #include <qlabeledslider.h>
 
 Brush::Brush(const std::string& name) :
+    prev_angles(new CircularBuffer<float>(5)),
     widget_(new QWidget),
     layout_(new QFormLayout),
     name_(name),
     size_slider_(new QLabeledSlider),
+    angle_slider_(new QLabeledSlider),
     color_mode_(ColorMode::Solid),
     color_location_(-1),
     color_(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)),
+    angle_mode_(AngleMode::Direct),
     color_image_(nullptr),
     color_image_width_(0),
     color_image_height_(0)
@@ -49,6 +52,12 @@ std::string Brush::GetName() const {
 void Brush::SetSize(unsigned int size) {
     size = size > 100 ? 100 : size;
     size_slider_->SetValue(size);
+}
+
+void Brush::SetAngle(unsigned int angle) {
+    angle = angle > 360 ? 360 : angle;
+    angle = angle < 0 ? 0 : angle;
+    angle_slider_->SetValue(angle);
 }
 
 void Brush::SetColor(const glm::vec3& color) {
@@ -78,6 +87,10 @@ unsigned int Brush::GetSize() const {
     return size_slider_->GetValue();
 }
 
+unsigned int Brush::GetAngle() const {
+    return angle_slider_->GetValue();
+}
+
 glm::vec4 Brush::GetColor(glm::ivec2 position) const {
     if (color_mode_ == ColorMode::Sample && color_image_ != nullptr) {
         unsigned int width = color_image_width_;
@@ -101,4 +114,16 @@ glm::vec4 Brush::GetColor(glm::ivec2 position) const {
     } else {
         return glm::vec4(color_, 1.0f);
     }
+}
+
+void Brush::SavePos(const glm::vec2 pos) {
+    saved_pos_ = pos;
+}
+
+glm::vec2 Brush::GetSavedPos(){
+    return saved_pos_;
+}
+
+AngleMode Brush::GetAngleMode() const{
+    return angle_mode_;
 }

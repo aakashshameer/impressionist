@@ -13,7 +13,6 @@ public:
     virtual void BrushEnd(const glm::vec2 pos) override;
 
 private:
-    QLabeledSlider* angle_slider_;
     QLabeledSlider* thiccness_slider_;
 };
 

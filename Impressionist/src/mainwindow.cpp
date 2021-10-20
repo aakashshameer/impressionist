@@ -20,6 +20,8 @@
 #include <QMessageBox>
 #include <QDebug>
 #include <QTimer>
+#include <math.h>
+#include <circularbuffer.h>
 
 QString MainWindow::LastPath = QDir::currentPath();
 
@@ -263,10 +265,18 @@ void MainWindow::CanvasMousePressed(QMouseEvent *event) {
         current_brush.SetColorImage(reference_image_, reference_image_width_, reference_image_height_);
         right_view_->SetCurrentLayer(PaintView::BASE_LAYER);
         // REQUIREMENT: Set brush angle if needed.
+        if (brush_dialog_->GetCurrentAngleControl() == AngleMode::CursorMovement){
+            current_brush.prev_angles->Fill(180);
+            current_brush.SetAngle(180);
+            current_brush.SavePos(pos);
+        } else if (brush_dialog_->GetCurrentAngleControl() == AngleMode::Gradient) {
+
+        }
         right_view_->DrawBegin(current_brush, pos);
     } else if (mouse_buttons_.testFlag(Qt::RightButton)) {
         right_view_->SetCurrentLayer(PaintView::OVERLAY_LAYER);
         angle_indicator_brush_.SetColor(glm::vec3(1.0f, 0.0f, 0.0f));
+        angle_indicator_brush_.SavePos(pos);
         right_view_->DrawBegin(angle_indicator_brush_, pos);
     }
 }
@@ -286,6 +296,44 @@ void MainWindow::CanvasMouseMoved(QMouseEvent *event) {
         right_view_->SetCurrentLayer(PaintView::BASE_LAYER);
         right_view_->DrawMove(current_brush, pos);
         // REQUIREMENT: Set brush angle if needed.
+        if (brush_dialog_->GetCurrentAngleControl() == AngleMode::CursorMovement){
+            float dx = pos.x - current_brush.GetSavedPos().x;
+            float dy = pos.y - current_brush.GetSavedPos().y;
+            float angle = atan2(dy, dx)*180/M_PI + 180;
+            current_brush.prev_angles->Push(angle);
+            current_brush.SavePos(pos);
+
+            float avg_angle = 0;
+            int num_below = 0;
+            int num_above = 0;
+            for (int i = 0; i < current_brush.prev_angles->Size(); i++) {
+                (*current_brush.prev_angles)[i] <= 180 ? num_below++ : num_above++;
+            }
+            for (int i = 0; i < current_brush.prev_angles->Size(); i++) {
+                if ((*current_brush.prev_angles)[i] <= 180 && num_below > num_above) {
+                    avg_angle += (*current_brush.prev_angles)[i];
+                } else if ((*current_brush.prev_angles)[i] <= 180 && num_below < num_above){
+                    avg_angle += (*current_brush.prev_angles)[i] + 180;
+                } else if ((*current_brush.prev_angles)[i] > 180 && num_below < num_above) {
+                    avg_angle += (*current_brush.prev_angles)[i];
+                } else if ((*current_brush.prev_angles)[i] > 180 && num_below > num_above) {
+                    avg_angle += (*current_brush.prev_angles)[i] - 180;
+                }
+            }
+            avg_angle /= current_brush.prev_angles->Size();
+//            float sum_cos = 0.0;
+//            float sum_sin = 0.0;
+//            for (int i = 0; i < current_brush.prev_angles->Size(); i++) {
+//                sum_cos += cosf((*current_brush.prev_angles)[i]);
+//                sum_sin += sinf((*current_brush.prev_angles)[i]);
+//            }
+//            sum_cos /= current_brush.prev_angles->Size();
+//            sum_sin /= current_brush.prev_angles->Size();
+//            float avg_angle = atan2(sum_sin,sum_cos);
+            current_brush.SetAngle(avg_angle);
+        } else if (brush_dialog_->GetCurrentAngleControl() == AngleMode::Gradient) {
+
+        }
     } else if (mouse_buttons_.testFlag(Qt::RightButton)) {
         right_view_->SetCurrentLayer(PaintView::OVERLAY_LAYER);
         right_view_->Clear(PaintView::RGBA_TRANSPARENT);
@@ -312,6 +360,11 @@ void MainWindow::CanvasMouseReleased(QMouseEvent *event) {
 
     if (mouse_buttons_.testFlag(Qt::RightButton)) {
         // REQUIREMENT: Set brush angle if needed.
+        float dx = pos.x - angle_indicator_brush_.GetSavedPos().x;
+        float dy = pos.y - angle_indicator_brush_.GetSavedPos().y;
+        Brush& current_brush = brush_dialog_->GetCurrentBrush();
+        current_brush.SetSize(sqrt(dx*dx + dy*dy));
+        current_brush.SetAngle(atan2(dy, dx)*180/M_PI + 180);
         right_view_->SetCurrentLayer(PaintView::OVERLAY_LAYER);
         right_view_->Clear(PaintView::RGBA_TRANSPARENT);
     }
