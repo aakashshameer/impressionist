@@ -26,7 +26,6 @@ Brush::Brush(const std::string& name) :
     color_mode_(ColorMode::Solid),
     color_location_(-1),
     color_(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)),
-    angle_mode_(AngleMode::Direct),
     color_image_(nullptr),
     color_image_width_(0),
     color_image_height_(0)
@@ -132,6 +131,18 @@ glm::vec2 Brush::GetSavedPos(){
     return saved_pos_;
 }
 
-AngleMode Brush::GetAngleMode() const{
-    return angle_mode_;
+int Brush::GetGradAngle(glm::vec2 pos) {
+    glm::vec4 gradient[3][3];
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            glm::vec2 curr_pos = { pos.x + i, pos.y + j };
+            glm::vec4 c = GetColor(curr_pos);
+            int intensity = 0.299*c.r + 0.587*c.g + 0.114*c.b;
+            c.r = intensity;
+            c.g = intensity;
+            c.b = intensity;
+            gradient[i][j] = c;
+        }
+    }
+    return 1;
 }

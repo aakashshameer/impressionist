@@ -270,7 +270,7 @@ void MainWindow::CanvasMousePressed(QMouseEvent *event) {
             current_brush.SetAngle(180);
             current_brush.SavePos(pos);
         } else if (brush_dialog_->GetCurrentAngleControl() == AngleMode::Gradient) {
-
+            current_brush.SetAngle(current_brush.GetGradAngle(pos));
         }
         right_view_->DrawBegin(current_brush, pos);
     } else if (mouse_buttons_.testFlag(Qt::RightButton)) {
@@ -304,30 +304,9 @@ void MainWindow::CanvasMouseMoved(QMouseEvent *event) {
                 current_brush.SavePos(pos);
             }
 
-//            float avg_angle = angle;
-//            int num_below = 0;
-//            int num_above = 0;
-//            for (int i = 0; i < current_brush.prev_angles->Size(); i++) {
-//                (*current_brush.prev_angles)[i] <= 180 ? num_below++ : num_above++;
-//            }
-//            for (int i = 0; i < current_brush.prev_angles->Size(); i++) {
-//                if ((*current_brush.prev_angles)[i] <= 180 && num_below > num_above) {
-//                    avg_angle += (*current_brush.prev_angles)[i];
-//                } else if ((*current_brush.prev_angles)[i] <= 180 && num_below < num_above){
-//                    avg_angle += (*current_brush.prev_angles)[i] + 180;
-//                } else if ((*current_brush.prev_angles)[i] > 180 && num_below < num_above) {
-//                    avg_angle += (*current_brush.prev_angles)[i];
-//                } else if ((*current_brush.prev_angles)[i] > 180 && num_below > num_above) {
-//                    avg_angle += (*current_brush.prev_angles)[i] - 180;
-//                }
-//            }
-//            avg_angle /= (current_brush.prev_angles->Size()+1);
-
-
             float sum_cos = current_brush.prev_angles->Size()*cosf(angle);
             float sum_sin = current_brush.prev_angles->Size()*sinf(angle);
             for (int i = 0; i < current_brush.prev_angles->Size(); i++) {
-                std::cout << (*current_brush.prev_angles)[i] << std::endl;
                 if (angle == (*current_brush.prev_angles)[i]*M_PI/180) {
                     sum_cos += current_brush.prev_angles->Size()*cosf((*current_brush.prev_angles)[i]*M_PI/180);
                     sum_sin += current_brush.prev_angles->Size()*sinf((*current_brush.prev_angles)[i]*M_PI/180);
@@ -341,7 +320,7 @@ void MainWindow::CanvasMouseMoved(QMouseEvent *event) {
             current_brush.prev_angles->Push(avg_angle);
             current_brush.SetAngle(avg_angle);
         } else if (brush_dialog_->GetCurrentAngleControl() == AngleMode::Gradient) {
-
+            current_brush.SetAngle(current_brush.GetGradAngle(pos));
         }
     } else if (mouse_buttons_.testFlag(Qt::RightButton)) {
         right_view_->SetCurrentLayer(PaintView::OVERLAY_LAYER);

@@ -68,6 +68,7 @@ public:
 
     virtual void SavePos(const glm::vec2 pos);
     virtual glm::vec2 GetSavedPos();
+    virtual int GetGradAngle(glm::vec2 pos);
 
     CircularBuffer<int>* prev_angles;
 
@@ -81,7 +82,6 @@ protected:
     ColorMode color_mode_;
     GLint color_location_;
     glm::vec3 color_;
-    AngleMode angle_mode_;
     glm::vec2 saved_pos_;
 
     // Image to sample colors from
@@ -92,7 +92,6 @@ protected:
     // Called inside the BrushBegin/BrushMove/BrushEnd methods
     unsigned int GetSize() const;
     unsigned int GetAngle() const;
-    AngleMode GetAngleMode() const;
 
     glm::vec4 GetColor(glm::ivec2 position = glm::ivec2(0, 0)) const;
     void UseColor(const glm::vec4& color);
