@@ -16,7 +16,7 @@
 #include <qlabeledslider.h>
 
 Brush::Brush(const std::string& name) :
-    prev_angles(new CircularBuffer<float>(5)),
+    prev_angles(new CircularBuffer<int>(10)),
     widget_(new QWidget),
     layout_(new QFormLayout),
     name_(name),
@@ -55,8 +55,8 @@ void Brush::SetSize(unsigned int size) {
 }
 
 void Brush::SetAngle(unsigned int angle) {
-    angle = angle > 360 ? 360 : angle;
-    angle = angle < 0 ? 0 : angle;
+    angle = angle > 360 ? angle-180 : angle;
+    angle = angle < 0 ? angle+180 : angle;
     angle_slider_->SetValue(angle);
 }
 

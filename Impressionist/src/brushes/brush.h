@@ -69,7 +69,7 @@ public:
     virtual void SavePos(const glm::vec2 pos);
     virtual glm::vec2 GetSavedPos();
 
-    CircularBuffer<float>* prev_angles;
+    CircularBuffer<int>* prev_angles;
 
 protected:
     QWidget* widget_;

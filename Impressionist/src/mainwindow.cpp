@@ -22,6 +22,7 @@
 #include <QTimer>
 #include <math.h>
 #include <circularbuffer.h>
+#include <iostream>
 
 QString MainWindow::LastPath = QDir::currentPath();
 
@@ -266,7 +267,6 @@ void MainWindow::CanvasMousePressed(QMouseEvent *event) {
         right_view_->SetCurrentLayer(PaintView::BASE_LAYER);
         // REQUIREMENT: Set brush angle if needed.
         if (brush_dialog_->GetCurrentAngleControl() == AngleMode::CursorMovement){
-            current_brush.prev_angles->Fill(180);
             current_brush.SetAngle(180);
             current_brush.SavePos(pos);
         } else if (brush_dialog_->GetCurrentAngleControl() == AngleMode::Gradient) {
@@ -299,37 +299,46 @@ void MainWindow::CanvasMouseMoved(QMouseEvent *event) {
         if (brush_dialog_->GetCurrentAngleControl() == AngleMode::CursorMovement){
             float dx = pos.x - current_brush.GetSavedPos().x;
             float dy = pos.y - current_brush.GetSavedPos().y;
-            float angle = atan2(dy, dx)*180/M_PI + 180;
-            current_brush.prev_angles->Push(angle);
-            current_brush.SavePos(pos);
-
-            float avg_angle = 0;
-            int num_below = 0;
-            int num_above = 0;
-            for (int i = 0; i < current_brush.prev_angles->Size(); i++) {
-                (*current_brush.prev_angles)[i] <= 180 ? num_below++ : num_above++;
+            float angle = atan2(dy, dx) + M_PI;
+            if (sqrt(dx*dx + dy*dy) > 10) {
+                current_brush.SavePos(pos);
             }
+
+//            float avg_angle = angle;
+//            int num_below = 0;
+//            int num_above = 0;
+//            for (int i = 0; i < current_brush.prev_angles->Size(); i++) {
+//                (*current_brush.prev_angles)[i] <= 180 ? num_below++ : num_above++;
+//            }
+//            for (int i = 0; i < current_brush.prev_angles->Size(); i++) {
+//                if ((*current_brush.prev_angles)[i] <= 180 && num_below > num_above) {
+//                    avg_angle += (*current_brush.prev_angles)[i];
+//                } else if ((*current_brush.prev_angles)[i] <= 180 && num_below < num_above){
+//                    avg_angle += (*current_brush.prev_angles)[i] + 180;
+//                } else if ((*current_brush.prev_angles)[i] > 180 && num_below < num_above) {
+//                    avg_angle += (*current_brush.prev_angles)[i];
+//                } else if ((*current_brush.prev_angles)[i] > 180 && num_below > num_above) {
+//                    avg_angle += (*current_brush.prev_angles)[i] - 180;
+//                }
+//            }
+//            avg_angle /= (current_brush.prev_angles->Size()+1);
+
+
+            float sum_cos = current_brush.prev_angles->Size()*cosf(angle);
+            float sum_sin = current_brush.prev_angles->Size()*sinf(angle);
             for (int i = 0; i < current_brush.prev_angles->Size(); i++) {
-                if ((*current_brush.prev_angles)[i] <= 180 && num_below > num_above) {
-                    avg_angle += (*current_brush.prev_angles)[i];
-                } else if ((*current_brush.prev_angles)[i] <= 180 && num_below < num_above){
-                    avg_angle += (*current_brush.prev_angles)[i] + 180;
-                } else if ((*current_brush.prev_angles)[i] > 180 && num_below < num_above) {
-                    avg_angle += (*current_brush.prev_angles)[i];
-                } else if ((*current_brush.prev_angles)[i] > 180 && num_below > num_above) {
-                    avg_angle += (*current_brush.prev_angles)[i] - 180;
+                std::cout << (*current_brush.prev_angles)[i] << std::endl;
+                if (angle == (*current_brush.prev_angles)[i]*M_PI/180) {
+                    sum_cos += current_brush.prev_angles->Size()*cosf((*current_brush.prev_angles)[i]*M_PI/180);
+                    sum_sin += current_brush.prev_angles->Size()*sinf((*current_brush.prev_angles)[i]*M_PI/180);
+                } else {
+                    sum_cos += cosf((*current_brush.prev_angles)[i]*M_PI/180)/(current_brush.prev_angles->Size()*abs(angle-(*current_brush.prev_angles)[i]*M_PI/180));
+                    sum_sin += sinf((*current_brush.prev_angles)[i]*M_PI/180)/(current_brush.prev_angles->Size()*abs(angle-(*current_brush.prev_angles)[i]*M_PI/180));
                 }
             }
-            avg_angle /= current_brush.prev_angles->Size();
-//            float sum_cos = 0.0;
-//            float sum_sin = 0.0;
-//            for (int i = 0; i < current_brush.prev_angles->Size(); i++) {
-//                sum_cos += cosf((*current_brush.prev_angles)[i]);
-//                sum_sin += sinf((*current_brush.prev_angles)[i]);
-//            }
-//            sum_cos /= current_brush.prev_angles->Size();
-//            sum_sin /= current_brush.prev_angles->Size();
-//            float avg_angle = atan2(sum_sin,sum_cos);
+            int avg_angle = atan2(sum_sin,sum_cos)*180/M_PI + 180;
+
+            current_brush.prev_angles->Push(avg_angle);
             current_brush.SetAngle(avg_angle);
         } else if (brush_dialog_->GetCurrentAngleControl() == AngleMode::Gradient) {
 
