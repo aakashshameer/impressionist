@@ -14,6 +14,8 @@ public:
 
 private:
     QLabeledSlider* thiccness_slider_;
+    QLabeledSlider* radius_slider_;
+    QLabeledSlider* density_slider_;
 };
 
 #endif // SCATTEREDLINEBRUSH_H

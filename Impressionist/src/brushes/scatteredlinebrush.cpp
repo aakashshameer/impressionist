@@ -5,7 +5,9 @@
 
 ScatteredLineBrush::ScatteredLineBrush(const std::string& name) :
     Brush(name),
-    thiccness_slider_(new QLabeledSlider)
+    thiccness_slider_(new QLabeledSlider),
+    radius_slider_(new QLabeledSlider),
+    density_slider_(new QLabeledSlider)
 {
     angle_slider_->SetRange(0, 360);
     layout_->addRow("Angle", angle_slider_);
@@ -13,10 +15,18 @@ ScatteredLineBrush::ScatteredLineBrush(const std::string& name) :
     thiccness_slider_->SetRange(1, 50);
     layout_->addRow("Thickness", thiccness_slider_);
 
+    radius_slider_->SetRange(1, 50);
+    layout_->addRow("Radius", radius_slider_);
+
+    density_slider_->SetRange(1, 20);
+    layout_->addRow("Density", density_slider_);
+
     // Set default values
     SetSize(24);
     SetAngle(0);
     thiccness_slider_->SetValue(2);
+    radius_slider_->SetValue(24);
+    density_slider_->SetValue(3);
 }
 
 
@@ -26,8 +36,8 @@ void ScatteredLineBrush::BrushBegin(const glm::vec2 pos) {
 
 void ScatteredLineBrush::BrushMove(const glm::vec2 pos) {
     // Points to draw
-    int radius = 20;
-    int density = 3;
+    int radius = radius_slider_->GetValue();
+    int density = density_slider_->GetValue();
     for (int i = 0; i < density; i++) {
         int x_offset = rand() % (2*radius+1) - radius;
         int y_offset = rand() % (2*radius+1) - radius;

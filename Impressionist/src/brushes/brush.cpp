@@ -16,7 +16,7 @@
 #include <qlabeledslider.h>
 
 Brush::Brush(const std::string& name) :
-    prev_angles(new CircularBuffer<int>(10)),
+    prev_angles(new CircularBuffer<int>(20)),
     widget_(new QWidget),
     layout_(new QFormLayout),
     name_(name),

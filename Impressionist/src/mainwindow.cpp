@@ -300,7 +300,7 @@ void MainWindow::CanvasMouseMoved(QMouseEvent *event) {
             float dx = pos.x - current_brush.GetSavedPos().x;
             float dy = pos.y - current_brush.GetSavedPos().y;
             float angle = atan2(dy, dx) + M_PI;
-            if (sqrt(dx*dx + dy*dy) > 10) {
+            if (sqrt(dx*dx + dy*dy) > current_brush.prev_angles->Size()) {
                 current_brush.SavePos(pos);
             }
 
