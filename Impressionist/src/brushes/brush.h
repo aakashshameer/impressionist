@@ -75,6 +75,7 @@ protected:
     QWidget* widget_;
     QFormLayout* layout_;
     std::string name_;
+    QLabeledSlider* opacity_slider_;
     QLabeledSlider* size_slider_;
     QLabeledSlider* angle_slider_;
     ColorMode color_mode_;

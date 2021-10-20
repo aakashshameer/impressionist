@@ -20,6 +20,7 @@ Brush::Brush(const std::string& name) :
     widget_(new QWidget),
     layout_(new QFormLayout),
     name_(name),
+    opacity_slider_(new QLabeledSlider),
     size_slider_(new QLabeledSlider),
     angle_slider_(new QLabeledSlider),
     color_mode_(ColorMode::Solid),
@@ -32,6 +33,10 @@ Brush::Brush(const std::string& name) :
 {
     widget_->setLayout(layout_);
 
+    opacity_slider_->SetRange(0, 100);
+    layout_->addRow("Opacity", opacity_slider_);
+    glEnable(GL_BLEND);
+
     // Size Slider
     size_slider_->SetRange(1, 100);
     layout_->addRow("Size", size_slider_);
@@ -40,6 +45,7 @@ Brush::Brush(const std::string& name) :
 
     // Default Values
     SetSize(12);
+    opacity_slider_->SetValue(100);
 }
 
 QWidget* Brush::GetWidget() const {
@@ -80,6 +86,8 @@ void Brush::SetColorLocation(GLint color_location) {
 
 void Brush::UseColor(const glm::vec4& color) {
     assert(color_location_ != -1);
+    glBlendColor(opacity_slider_->GetValue()/100.0f, opacity_slider_->GetValue()/100.0f, opacity_slider_->GetValue()/100.0f, 1);
+    glBlendFuncSeparate(GL_CONSTANT_COLOR, GL_ONE_MINUS_CONSTANT_COLOR, GL_ONE, GL_ZERO);
     glUniform4fv(color_location_, 1, glm::value_ptr(color));
 }
 
