@@ -14,6 +14,7 @@
 #include <vectors.h>
 #include <functional>
 #include <rgbabuffer.h>
+#include <forms/filterkerneldialog.h>
 
 #include <QDebug>
 
@@ -21,7 +22,12 @@
 // OPTIONAL: You can choose to implement this as a helper class for filter kernel.
 class Kernel {
 public:
-    Kernel() { }
+    Kernel();
+
+    void SetKernelValue (int i, int j, float f);
+    float GetKernelValue (int i, int j);
+private:
+    float filter_[5][5];
 };
 
 class Filter {

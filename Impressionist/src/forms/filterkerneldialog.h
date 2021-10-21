@@ -45,6 +45,8 @@ private:
 
     // Resets the UI controls to their default state
     void Reset();
+
+
 };
 
 #endif // FILTERKERNELDIALOG_H

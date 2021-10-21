@@ -84,13 +84,24 @@ void FilterKernelDialog::Preview() {
     unsigned int width = paint_view_->GetWidth();
     unsigned int height = paint_view_->GetHeight();
     RGBABuffer filtered(width, height);
+    Kernel k;
 
     // REQUIREMENT: Compute the filtered image
     // See FilterKernelDialog::GetKernelValue to access kernel values from UI
     // Filter::ApplyFilterKernel(...);
 
+    for(int i = 0; i < 5; i++){
+        for(int j = 0; j < 5; j++){
+            k.SetKernelValue(i, j, GetKernelValue(i,j));
+        }
+    }
+
+
+    Filter::ApplyFilterKernel(original_image_->Bytes, filtered.Bytes, width, height, k);
+
+
     // REQUIREMENT: Draw the filtered image
-    paint_view_->DrawImage(original_image_->Bytes, width, height);
+    paint_view_->DrawImage(filtered.Bytes, width, height);
 }
 
 void FilterKernelDialog::Reset() {
