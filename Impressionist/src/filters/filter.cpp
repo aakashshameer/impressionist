@@ -86,6 +86,20 @@ void Filter::ApplyFilterKernel(const unsigned char *source, unsigned char *dest,
                 }
             }
 
+            r_sum += offset;
+            g_sum += offset;
+            b_sum += offset;
+
+            r_sum = r_sum < 0 ? 0 : r_sum;
+            g_sum = g_sum < 0 ? 0 : g_sum;
+            b_sum = b_sum < 0 ? 0 : b_sum;
+
+            r_sum = r_sum > 255 ? 255 : r_sum;
+            g_sum = g_sum > 255 ? 255 : g_sum;
+            b_sum = b_sum > 255 ? 255 : b_sum;
+
+
+
             dest_rGrid[i - 2][j - 2] = r_sum;
             dest_gGrid[i - 2][j - 2] = g_sum;
             dest_bGrid[i - 2][j - 2] = b_sum;
