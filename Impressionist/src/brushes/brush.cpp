@@ -14,6 +14,7 @@
 #include <QFormLayout>
 #include <QComboBox>
 #include <qlabeledslider.h>
+#include <math.h>
 
 Brush::Brush(const std::string& name) :
     prev_angles(new CircularBuffer<int>(20)),
