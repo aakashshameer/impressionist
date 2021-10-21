@@ -28,7 +28,8 @@ enum class Brushes {
     Circle,
     ScatterPoint,
     ScatterLine,
-    ScatterCircle
+    ScatterCircle,
+    Triangle
 };
 
 // How to control the angle of the brush

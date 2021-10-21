@@ -16,6 +16,7 @@
 #include <brushes/scatteredpointbrush.h>
 #include <brushes/circlebrush.h>
 #include <brushes/scatteredcirclebrush.h>
+#include <brushes/trianglebrush.h>
 
 BrushDialog::BrushDialog(QWidget *parent) :
     QDialog(parent),
@@ -34,6 +35,7 @@ BrushDialog::BrushDialog(QWidget *parent) :
     brushes_[Brushes::ScatterPoint] = std::make_unique<ScatteredPointBrush>("Scattered Points");
     brushes_[Brushes::ScatterLine] = std::make_unique<ScatteredLineBrush>("Scattered Lines");
     brushes_[Brushes::ScatterCircle] = std::make_unique<ScatteredCircleBrush>("Scattered Circles");
+    brushes_[Brushes::Triangle] = std::make_unique<TriangleBrush>("Triangles");
 
     // Add the brushes to the combo box
     for (auto& kv : brushes_) {

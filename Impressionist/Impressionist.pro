@@ -27,6 +27,7 @@ HEADERS += \
     src/brushes/scatteredlinebrush.h \
     src/brushes/scatteredpointbrush.h \
     src/brushes/singlelinebrush.h \
+    src/brushes/trianglebrush.h \
     src/mainwindow.h \
     src/paintview.h \
     src/glinclude.h \
@@ -52,6 +53,7 @@ SOURCES += \
     src/brushes/scatteredlinebrush.cpp \
     src/brushes/scatteredpointbrush.cpp \
     src/brushes/singlelinebrush.cpp \
+    src/brushes/trianglebrush.cpp \
     src/main.cpp \
     src/mainwindow.cpp \
     src/paintview.cpp \
