@@ -38,7 +38,7 @@ void Filter::ApplyFilterKernel(const unsigned char *source, unsigned char *dest,
     float** dest_gGrid = new float*[height];
     float** dest_bGrid = new float*[height];
 
-    for (unsigned int i = 0; i < height+4; i++) {
+    for (unsigned int i = 0; i < height; i++) {
         dest_rGrid[i] = new float[width];
         dest_gGrid[i] = new float[width];
         dest_bGrid[i] = new float[width];
@@ -119,8 +119,6 @@ void Filter::ApplyFilterKernel(const unsigned char *source, unsigned char *dest,
             point++;
         }
     }
-
-
 
 }
 

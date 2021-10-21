@@ -89,15 +89,26 @@ void FilterKernelDialog::Preview() {
     // REQUIREMENT: Compute the filtered image
     // See FilterKernelDialog::GetKernelValue to access kernel values from UI
     // Filter::ApplyFilterKernel(...);
-
+    float k_sum = 0;
     for(int i = 0; i < 5; i++){
         for(int j = 0; j < 5; j++){
-            k.SetKernelValue(i, j, GetKernelValue(i,j));
+            float k_value = GetKernelValue(i, j);
+            k_value = k_value < 0 ? 0 : k_value > 255 ? 255 : k_value;
+            k_value = ui->divisor_spinbox->value() == 0 ? 255 : k_value/ui->divisor_spinbox->value();
+            k_sum += k_value;
+            k.SetKernelValue(i, 4-j, k_value);
+        }
+    }
+    if (ui->normalize_checkbox->isChecked()) {
+        for(int i = 0; i < 5; i++){
+            for(int j = 0; j < 5; j++){
+                k.SetKernelValue(i, 4-j, k.GetKernelValue(i, j)/k_sum);
+            }
         }
     }
 
 
-    Filter::ApplyFilterKernel(original_image_->Bytes, filtered.Bytes, width, height, k);
+    Filter::ApplyFilterKernel(original_image_->Bytes, filtered.Bytes, width, height, k, ui->offset_spinbox->value());
 
 
     // REQUIREMENT: Draw the filtered image
