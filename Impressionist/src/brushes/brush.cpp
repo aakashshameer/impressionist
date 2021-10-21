@@ -132,17 +132,31 @@ glm::vec2 Brush::GetSavedPos(){
 }
 
 int Brush::GetGradAngle(glm::vec2 pos) {
-    glm::vec4 gradient[3][3];
+    float gradient[3][3];
     for (int i = 0; i < 3; i++) {
         for (int j = 0; j < 3; j++) {
-            glm::vec2 curr_pos = { pos.x + i, pos.y + j };
+            glm::vec2 curr_pos = { pos.x + i, pos.y + j};
             glm::vec4 c = GetColor(curr_pos);
-            int intensity = 0.299*c.r + 0.587*c.g + 0.114*c.b;
-            c.r = intensity;
-            c.g = intensity;
-            c.b = intensity;
-            gradient[i][j] = c;
+            float intensity = 0.299*c.r + 0.587*c.g + 0.114*c.b;
+            gradient[i][j] = intensity;
         }
     }
-    return 1;
+
+    int sobel_x[3][3] = {{1, 0, -1},
+                         {2, 0, -2},
+                         {1, 0, -1}};
+
+    int sobel_y[3][3] = {{1, 2, 1},
+                         {0, 0, 0},
+                         {-1, -2, -1}};
+    float s_x = 0.0;
+    float s_y = 0.0;
+    for(int i = 0; i < 3; i++){
+        for(int j = 0; j < 3; j++){
+            s_x += ((sobel_x[i][j]) * gradient[i][j]);
+            s_y += ((sobel_y[i][j]) * gradient[i][j]);
+        }
+    }
+    int angle = atan2(s_y, s_x) *180/M_PI + 180;
+    return angle;
 }
