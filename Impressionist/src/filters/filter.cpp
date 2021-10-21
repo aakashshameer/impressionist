@@ -24,13 +24,25 @@ float Kernel::GetKernelValue (int i, int j){
 
 void Filter::ApplyFilterKernel(const unsigned char *source, unsigned char *dest, unsigned int width, unsigned int height, Kernel &k, int offset, bool clamping) {
     // REQUIREMENT: Implement this function
-    int rGrid [height+4][width+4];
-    int gGrid [height+4][width+4];
-    int bGrid [height+4][width+4];
+    float** rGrid = new float*[height+4];
+    float** gGrid = new float*[height+4];
+    float** bGrid = new float*[height+4];
 
-    int dest_rGrid [height][width];
-    int dest_gGrid [height][width];
-    int dest_bGrid [height][width];
+    for (unsigned int i = 0; i < height+4; i++) {
+        rGrid[i] = new float[width+4];
+        gGrid[i] = new float[width+4];
+        bGrid[i] = new float[width+4];
+    }
+
+    float** dest_rGrid = new float*[height];
+    float** dest_gGrid = new float*[height];
+    float** dest_bGrid = new float*[height];
+
+    for (unsigned int i = 0; i < height+4; i++) {
+        dest_rGrid[i] = new float[width];
+        dest_gGrid[i] = new float[width];
+        dest_bGrid[i] = new float[width];
+    }
 
     int point = 0;
     for(unsigned int i = 2; i < height + 2; i++) {
@@ -67,7 +79,7 @@ void Filter::ApplyFilterKernel(const unsigned char *source, unsigned char *dest,
             float g_sum = 0.0f;
             float b_sum = 0.0f;
             for(unsigned int l = 0; l < 5; l++){
-                for(unsigned int m = 0; j < 5; j++){
+                for(unsigned int m = 0; m < 5; m++){
                     r_sum += k.GetKernelValue(l,m) * rGrid[i - 2 + l][j - 2 + m];
                     g_sum += k.GetKernelValue(l,m) * gGrid[i - 2 + l][j - 2 + m];
                     b_sum += k.GetKernelValue(l,m) * bGrid[i - 2 + l][j - 2 + m];
@@ -88,7 +100,9 @@ void Filter::ApplyFilterKernel(const unsigned char *source, unsigned char *dest,
             dest[point] = dest_gGrid[i][j];
             point++;
             dest[point] = dest_bGrid[i][j];
-            point += 2; //go to the next point and skip over alpha value
+            point++;
+            dest[point] = 255;
+            point++;
         }
     }
 
